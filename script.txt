@@ -1,6 +1,8 @@
 local LOCAL_PLAYER = game.Players.LocalPlayer
 local MOUSE = LOCAL_PLAYER:GetMouse()
 
+local INPUT_SERVICE = game:GetService("UserInputService")
+
 local SCRIPT_ENABLED = true
 
 local APPLICATION_GUI_PARENT = game:GetService("RunService"):IsStudio() and game.Players.LocalPlayer.PlayerGui or game.CoreGui
@@ -1017,14 +1019,12 @@ repeat
 			if switch_Freecam_Enabled.GetValue() == true and game.Players.LocalPlayer.Character.Humanoid.Health > 0 then
 				do
 					spawn(function()
-						local inputService = game:GetService("UserInputService")
-						
-						local w = inputService:IsKeyDown(Enum.KeyCode.W)
-						local a = inputService:IsKeyDown(Enum.KeyCode.A)
-						local s = inputService:IsKeyDown(Enum.KeyCode.S)
-						local d = inputService:IsKeyDown(Enum.KeyCode.D)
-						local leftShift = inputService:IsKeyDown(Enum.KeyCode.LeftShift)
-						local space = inputService:IsKeyDown(Enum.KeyCode.Space)
+						local w = INPUT_SERVICE:IsKeyDown(Enum.KeyCode.W)
+						local a = INPUT_SERVICE:IsKeyDown(Enum.KeyCode.A)
+						local s = INPUT_SERVICE:IsKeyDown(Enum.KeyCode.S)
+						local d = INPUT_SERVICE:IsKeyDown(Enum.KeyCode.D)
+						local down = INPUT_SERVICE:IsKeyDown(Enum.KeyCode.Q)
+						local up = INPUT_SERVICE:IsKeyDown(Enum.KeyCode.E)
 						
 						if w and s or (not w and not s) then
 							freecamVelocity = Vector3.new(freecamVelocity.X, freecamVelocity.Y, 0)
@@ -1042,32 +1042,42 @@ repeat
 							freecamVelocity = Vector3.new(1, freecamVelocity.Y, freecamVelocity.Z)
 						end
 						
-						if leftShift and space or (not leftShift and not space) then
+						if down and up or (not down and not up) then
 							freecamVelocity = Vector3.new(freecamVelocity.X, 0, freecamVelocity.Z)
-						elseif leftShift then
+						elseif down then
 							freecamVelocity = Vector3.new(freecamVelocity.X, -1, freecamVelocity.Z)
-						elseif space then
+						elseif up then
 							freecamVelocity = Vector3.new(freecamVelocity.X, 1, freecamVelocity.Z)
 						end
 						
-						if inputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) then
-							inputService.MouseBehavior = Enum.MouseBehavior.LockCurrentPosition
+						if INPUT_SERVICE:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) then
+							INPUT_SERVICE.MouseBehavior = Enum.MouseBehavior.LockCurrentPosition
 							
-							local delta = inputService:GetMouseDelta()
-							local sens = inputService.MouseDeltaSensitivity * slider_FreecamSensitivity.GetValue()
+							local delta = INPUT_SERVICE:GetMouseDelta()
+							local sens = INPUT_SERVICE.MouseDeltaSensitivity * slider_FreecamSensitivity.GetValue()
 							
 							local x = delta.X * (sens * sens)
 							local y = delta.Y * (sens * sens)
 							
 							freecamRotation = freecamRotation + Vector2.new(math.rad(x), math.rad(y))
 						else
-							inputService.MouseBehavior = Enum.MouseBehavior.Default
+							INPUT_SERVICE.MouseBehavior = Enum.MouseBehavior.Default
 						end
 					end)
 				end
 				
 				-- Update Camera
-				local move = freecamVelocity.Unit * slider_FreecamSpeed.GetValue() * dt
+				local speedMultiplier = 1
+				
+				if INPUT_SERVICE:IsKeyDown(Enum.KeyCode.LeftShift) then
+					speedMultiplier = speedMultiplier * 2
+				end
+				
+				if INPUT_SERVICE:IsKeyDown(Enum.KeyCode.LeftControl) then
+					speedMultiplier = speedMultiplier * 0.3
+				end
+				
+				local move = freecamVelocity.Unit * slider_FreecamSpeed.GetValue() * dt * speedMultiplier
 				if tostring(move.X) == "-nan(ind)" then move = Vector3.new(0, 0, 0) end
 				
 				cam.CameraType = Enum.CameraType.Scriptable
