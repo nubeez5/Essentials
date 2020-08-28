@@ -835,6 +835,8 @@ AddPadding(elements_Container, 17, "Misc")
 local button_TeleportToCamera = CreateButton(elements_Container, "Button_TeleportToCamera", "Teleport To Camera", "Teleport")
 local button_TeleportThrough = CreateButton(elements_Container, "Button_TeleportThrough", "Teleport Through", "Teleport")
 
+local switch_Noclip = CreateSwitch(elements_Container, "Switch_Noclip", "Noclip Enabled", false)
+
 -- Settings
 AddPadding(elements_Container, 17, "Settings")
 local slider_FreecamSpeed = CreateSlider(elements_Container, "Slider_FreecamSpeed", "Freecam Speed", 0, 1000, 100, " sps")
@@ -975,6 +977,15 @@ while SCRIPT_ENABLED do
 	
 	if SCRIPT_ENABLED then
 		local cam = workspace.CurrentCamera
+		
+		-- Noclip
+		if switch_Noclip.GetValue() == true then
+			if LOCAL_PLAYER.Character then
+				pcall(function()
+					LOCAL_PLAYER.Character.Humanoid:ChangeState(11)
+				end)
+			end
+		end
 		
 		if switch_ESP_Enabled.ValueChanged() then
 			if switch_ESP_Enabled.GetValue() == true then
