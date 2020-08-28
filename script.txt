@@ -756,7 +756,7 @@ local function CreateColorPicker(parent, name, titleText)
 	end)
 end
 
-local function CreateStatusBox(parent, name, elementCount) -- Allows the script to show the user info
+local function CreateOutput(parent, name, elementCount) -- Allows the script to show the user info
 	local elementContainer = Instance.new("Frame", parent)
 	elementContainer.Name = "ElementContainer"
 	elementContainer.BackgroundTransparency = 1
@@ -843,7 +843,7 @@ local slider_TeleportThroughLength = CreateSlider(elements_Container, "Slider_Te
 
 -- Status
 AddPadding(elements_Container, 17, "Stats")
-local status_Statuses = CreateStatusBox(elements_Container, "Status_StatusBox", 3)
+local status_Statuses = CreateOutput(elements_Container, "Status_StatusBox", 3)
 
 local uniqueId = tostring(game:GetService("HttpService"):GenerateGUID(false))
 
@@ -964,7 +964,7 @@ local freecamVelocity = Vector3.new(0, 0, 0)
 local freecamRotation = Vector2.new(0, 0)
 local freecamPosition = Vector3.new(0, 0, 0)
 
-local previousCamType = nil
+local previousCamType = Enum.CameraType.Custom
 local lastTick = tick()
 
 local aimbotTarget = nil
