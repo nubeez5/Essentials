@@ -1167,6 +1167,11 @@ while SCRIPT_ENABLED do
 		local camPosString = RoundNumber(cam.CFrame.Position.X, 2) .. ", " .. RoundNumber(cam.CFrame.Position.Y, 2) .. ", " .. RoundNumber(cam.CFrame.Position.Z, 2)
 		
 		status_Statuses.EditStatus(1, "Camera Position: " .. camPosString)
+		status_Statuses.EditStatus(2, "Health: N/A")
+		
+		pcall(function()
+			status_Statuses.EditStatus(2, "Health: " .. math.floor(LOCAL_PLAYER.Character.Humanoid.Health + 0.5) .. "/" .. math.floor(LOCAL_PLAYER.Character.Humanoid.MaxHealth + 0.5))
+		end)
 	end
 	
 	lastTick = tick()
