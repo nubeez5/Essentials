@@ -9,6 +9,7 @@ local APPLICATION_GUI_PARENT = game:GetService("RunService"):IsStudio() and game
 local APPLICATION_SIZE = UDim2.new(0, 380, 0, 260)
 local APPLICATION_MINIMIZED = false
 
+local ELEMENT_CONTAINER_EXTRA_PADDING = 0
 local ELEMENT_CONTAINER_HEIGHT = 19
 local ELEMENT_TITLE_PADDING = 10
 local SLIDER_MAX_DECIMAL_PLACES = 2
@@ -226,19 +227,19 @@ local function CreateScrollingFrame(parent, name, size, position, anchorPoint, p
 	local scrolling = false
 	local engaged = false
 	
-	container.CanvasSize = UDim2.new(0, 0, 0, 20)
+	container.CanvasSize = UDim2.new(0, 0, 0, ELEMENT_CONTAINER_EXTRA_PADDING)
 	
 	container.ChildAdded:Connect(function(c)
 		pcall(function()
 			wait()
-			container.CanvasSize = UDim2.new(0, 0, 0, list.AbsoluteContentSize.Y + c.AbsoluteSize.Y)
+			container.CanvasSize = UDim2.new(0, 0, 0, list.AbsoluteContentSize.Y + c.AbsoluteSize.Y + ELEMENT_CONTAINER_EXTRA_PADDING)
 		end)
 	end)
 	
 	container.ChildRemoved:Connect(function(c)
 		pcall(function()
 			wait()
-			container.CanvasSize = UDim2.new(0, 0, 0, list.AbsoluteContentSize.Y - c.AbsoluteSize.Y)
+			container.CanvasSize = UDim2.new(0, 0, 0, list.AbsoluteContentSize.Y - c.AbsoluteSize.Y + ELEMENT_CONTAINER_EXTRA_PADDING)
 		end)
 	end)
 	
@@ -374,7 +375,7 @@ local function CreateSwitch(parent, name, titleText, onByDefault)
 	-- Element
 	local backgroundColor = onByDefault and APPLICATION_THEME.Switch_On_Color or APPLICATION_THEME.Switch_Off_Color
 	
-	local switchBackground = CreateFrame(elementContainer, "SliderBackground", 7, UDim2.new(0, 30, 0, 13), UDim2.new(1, -181, 0.5, 0), Vector2.new(1, 0.5), backgroundColor)
+	local switchBackground = CreateFrame(elementContainer, "SliderBackground", 7, UDim2.new(0, 30, 0, 13), UDim2.new(0, 170, 0.5, 0), Vector2.new(0, 0.5), backgroundColor)
 	
 	local knob = Instance.new("ImageLabel", switchBackground)
 	knob.Name = "Knob"
@@ -664,6 +665,10 @@ local function CreateInput(parent, name, titleText) -- Allows the user to provid
 		return inputBox.Text
 	end
 	
+	function t.SetText(t)
+		inputBox.Text = t
+	end
+	
 	return t
 end
 
@@ -859,6 +864,12 @@ local function AddESPToPlayer(plr)
 		box.Transparency = 0.5
 		box.ZIndex = 10
 		box.AlwaysOnTop = true
+		
+		c.AncestryChanged:Connect(function()
+			if not box:IsAncestorOf(workspace) then
+				box:Destroy()
+			end
+		end)
 		
 		return box
 	end
