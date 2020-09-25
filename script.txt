@@ -864,6 +864,10 @@ local slider_FreecamSpeed = CreateSlider(elements_Container, "Slider_FreecamSpee
 local slider_FreecamSensitivity = CreateSlider(elements_Container, "Slider_FreecamSensitivity", "Freecam Sensitivity", 0, 5, 0.5)
 local slider_TeleportThroughLength = CreateSlider(elements_Container, "Slider_TeleportThroughLength", "Teleport Through Length", 0, 50, 5, " studs")
 
+-- Fix
+AddPadding(elements_Container, 17, "Fix")
+local button_FixCamera = CreateButton(elements_Container, "Button_FixCamera", "Fix Camera", "Fix")
+
 -- Status
 AddPadding(elements_Container, 17, "Stats")
 local status_Statuses = CreateOutput(elements_Container, "Status_StatusBox", 3)
@@ -1140,13 +1144,17 @@ while SCRIPT_ENABLED do
 			
 			freecamPosition = freecamPosition + (move.Z * look) + (move.X * right) + (move.Y * up)
 			cam.CFrame = CFrame.new(freecamPosition) * CFrame.fromOrientation(-freecamRotation.Y, -freecamRotation.X, 0)
-		elseif previousCamType then
+		elseif previousCamType and switch_Freecam_Enabled.ValueChanged() then
 			freecamVelocity = Vector3.new(0, 0, 0)
 			
 			cam.CameraType = previousCamType
 			previousCamType = cam.CameraType
 		else
 			previousCamType = cam.CameraType
+		end
+		
+		if button_FixCamera.ButtonPressed() then
+		    cam.CameraType = Enum.CameraType.Custom
 		end
 		
 		if game:GetService("UserInputService"):IsKeyDown(keybind_Aimbot.GetKeyCode()) and switch_Aimbot_Enabled.GetValue() then
