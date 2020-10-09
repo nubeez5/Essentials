@@ -1158,7 +1158,7 @@ while SCRIPT_ENABLED do
 		end
 		
 		if button_FixCamera.ButtonPressed() then
-			pcall(function())
+			pcall(function()
 				cam.CameraType = Enum.CameraType.Custom
 				workspace.CurrentCamera.CameraSubject = LOCAL_PLAYER.Character.Humanoid
 			end)
