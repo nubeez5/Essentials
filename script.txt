@@ -1158,7 +1158,10 @@ while SCRIPT_ENABLED do
 		end
 		
 		if button_FixCamera.ButtonPressed() then
-			cam.CameraType = Enum.CameraType.Custom
+			pcall(function())
+				cam.CameraType = Enum.CameraType.Custom
+				workspace.CurrentCamera.CameraSubject = LOCAL_PLAYER.Character.Humanoid
+			end)
 		end
 		
 		if game:GetService("UserInputService"):IsKeyDown(keybind_Aimbot.GetKeyCode()) and switch_Aimbot_Enabled.GetValue() then
