@@ -843,6 +843,8 @@ local switch_Aimbot_TeamCheck_Enabled = CreateSwitch(elements_Container, "Switch
 -- Keybinds
 AddPadding(elements_Container, 17, "Keybinds")
 local keybind_Aimbot = CreateKeybind(elements_Container, "Keybind_Aimbot", "Engage Aimbot", DEFAULT_AIMBOT_KEY)
+local keybind_FreecamUp = CreateKeybind(elements_Container, "Keybind_FreecamUp", "Freecam Up", Enum.KeyCode.E)
+local keybind_FreecamDown = CreateKeybind(elements_Container, "Keybind_FreecamDown", "Freecam Down", Enum.KeyCode.Q)
 
 -- Teleport
 AddPadding(elements_Container, 17, "Teleport")
@@ -1029,16 +1031,17 @@ while SCRIPT_ENABLED do
 	
 	if switch_Freecam_Enabled.ValueChanged() then
 		if switch_Freecam_Enabled.GetValue() == true then
-			game:GetService("ContextActionService"):BindActionAtPriority("WASDKeys", function() return Enum.ContextActionResult.Sink end, false, Enum.ContextActionPriority.High.Value, Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D, Enum.KeyCode.LeftShift, Enum.KeyCode.Space)
+			game:GetService("ContextActionService"):BindActionAtPriority("WASDUpDownKeys", function() return Enum.ContextActionResult.Sink end, false, Enum.ContextActionPriority.High.Value, Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D, keybind_FreecamDown.GetKeyCode(), keybind_FreecamUp.GetKeyCode())
 			previousCamType = cam.CameraType
 			
 			local x, y = workspace.CurrentCamera.CFrame:ToOrientation()
 			freecamPosition = workspace.CurrentCamera.CFrame.Position
 			freecamRotation = Vector2.new(-y, -x)
 		else
-			game:GetService("ContextActionService"):BindActionAtPriority("WASDKeys", function() return Enum.ContextActionResult.Pass end, false, Enum.ContextActionPriority.High.Value, Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D, Enum.KeyCode.LeftShift, Enum.KeyCode.Space)
+			game:GetService("ContextActionService"):BindActionAtPriority("WASDUpDownKeys", function() return Enum.ContextActionResult.Pass end, false, Enum.ContextActionPriority.High.Value, Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D, keybind_FreecamDown.GetKeyCode(), keybind_FreecamUp.GetKeyCode())
 			cam.CameraType = previousCamType
 			
+			--[[
 			local stuff = APP_GUI:GetChildren()
 			
 			for i = 1, #stuff do
@@ -1046,6 +1049,7 @@ while SCRIPT_ENABLED do
 					stuff[i]:Destroy()
 				end
 			end
+			]]
 		end
 	end
 	
@@ -1079,8 +1083,8 @@ while SCRIPT_ENABLED do
 					local a = INPUT_SERVICE:IsKeyDown(Enum.KeyCode.A)
 					local s = INPUT_SERVICE:IsKeyDown(Enum.KeyCode.S)
 					local d = INPUT_SERVICE:IsKeyDown(Enum.KeyCode.D)
-					local down = INPUT_SERVICE:IsKeyDown(Enum.KeyCode.Q)
-					local up = INPUT_SERVICE:IsKeyDown(Enum.KeyCode.E)
+					local down = INPUT_SERVICE:IsKeyDown(keybind_FreecamDown.GetKeyCode())
+					local up = INPUT_SERVICE:IsKeyDown(keybind_FreecamUp.GetKeyCode())
 					
 					if w and s or (not w and not s) then
 						freecamVelocity = Vector3.new(freecamVelocity.X, freecamVelocity.Y, 0)
@@ -1154,7 +1158,7 @@ while SCRIPT_ENABLED do
 		end
 		
 		if button_FixCamera.ButtonPressed() then
-		    cam.CameraType = Enum.CameraType.Custom
+			cam.CameraType = Enum.CameraType.Custom
 		end
 		
 		if game:GetService("UserInputService"):IsKeyDown(keybind_Aimbot.GetKeyCode()) and switch_Aimbot_Enabled.GetValue() then
