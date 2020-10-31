@@ -859,6 +859,7 @@ local button_TeleportToPlayer = CreateButton(elements_Container, "Button_Telepor
 AddPadding(elements_Container, 17, "Misc")
 
 local switch_Noclip = CreateSwitch(elements_Container, "Switch_Noclip", "Noclip Enabled", false)
+local switch_ShowDistance = CreateSwitch(elements_Container, "Switch_ShowDistance_Enabled", "Show Distance", true)
 
 -- Settings
 AddPadding(elements_Container, 17, "Settings")
@@ -934,7 +935,11 @@ local function AddESPToPlayer(plr)
 								tag.TextColor3 = Color3.new(plr.TeamColor.r, plr.TeamColor.g, plr.TeamColor.b)
 								
 								if plr.Character:FindFirstChild("Humanoid") then
-									tag.Text = tag.Text ..  "[" .. math.floor(plr.Character.Humanoid.Health + 0.5) .. "/" .. math.floor(plr.Character.Humanoid.MaxHealth + 0.5) .. "]"
+									tag.Text = tag.Text .. "[" .. math.floor(plr.Character.Humanoid.Health + 0.5) .. "/" .. math.floor(plr.Character.Humanoid.MaxHealth + 0.5) .. "]"
+									
+									if switch_ShowDistance.GetValue() == true then
+										tag.Text = tag.Text .. "[" .. math.floor((workspace.CurrentCamera.CFrame.Position - plr.Character.HumanoidRootPart.Position).Magnitude + 0.5) .. " studs]"
+									end
 								end
 							else
 								tag:Destroy()
@@ -1031,14 +1036,14 @@ while SCRIPT_ENABLED do
 	
 	if switch_Freecam_Enabled.ValueChanged() then
 		if switch_Freecam_Enabled.GetValue() == true then
-			game:GetService("ContextActionService"):BindActionAtPriority("WASDUpDownKeys", function() return Enum.ContextActionResult.Sink end, false, Enum.ContextActionPriority.High.Value, Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D, keybind_FreecamDown.GetKeyCode(), keybind_FreecamUp.GetKeyCode())
+			game:GetService("ContextActionService"):BindActionAtPriority("WASDUpDownKeys", function() return Enum.ContextActionResult.Sink end, false, Enum.ContextActionPriority.High.Value, Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D, keybind_FreecamDown.GetKeyCode(), keybind_FreecamUp.GetKeyCode(), Enum.KeyCode.Space, Enum.KeyCode.LeftShift)
 			previousCamType = cam.CameraType
 			
 			local x, y = workspace.CurrentCamera.CFrame:ToOrientation()
 			freecamPosition = workspace.CurrentCamera.CFrame.Position
 			freecamRotation = Vector2.new(-y, -x)
 		else
-			game:GetService("ContextActionService"):BindActionAtPriority("WASDUpDownKeys", function() return Enum.ContextActionResult.Pass end, false, Enum.ContextActionPriority.High.Value, Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D, keybind_FreecamDown.GetKeyCode(), keybind_FreecamUp.GetKeyCode())
+			game:GetService("ContextActionService"):BindActionAtPriority("WASDUpDownKeys", function() return Enum.ContextActionResult.Pass end, false, Enum.ContextActionPriority.High.Value, Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D, keybind_FreecamDown.GetKeyCode(), keybind_FreecamUp.GetKeyCode(), Enum.KeyCode.Space, Enum.KeyCode.LeftShift)
 			cam.CameraType = previousCamType
 			
 			--[[
