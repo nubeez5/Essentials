@@ -606,7 +606,7 @@ local function CreateButton(parent, name, titleText, buttonText) -- Allows you t
 	return t
 end
 
-local function CreateInput(parent, name, titleText) -- Allows the user to provide input
+local function CreateInput(parent, name, titleText, default) -- Allows the user to provide input
 	local elementContainer = Instance.new("Frame", parent)
 	elementContainer.Name = "ElementContainer"
 	elementContainer.BackgroundTransparency = 1
@@ -637,7 +637,7 @@ local function CreateInput(parent, name, titleText) -- Allows the user to provid
 	inputBox.AnchorPoint = Vector2.new(1, 0)
 	inputBox.Position = UDim2.new(1, 0, 0, 0)
 	inputBox.TextColor3 = APPLICATION_THEME.TextColor
-	inputBox.Text = "Enter Here"
+	inputBox.Text = default ~= nil and default or "Enter Here"
 	
 	-- Functionality
 	local textChanged = false
@@ -830,6 +830,13 @@ local dragHandle = CreateDragHandle(mainFrame, APP_GUI, "DragHandle", UDim2.new(
 
 local elements_Container = CreateScrollingFrame(mainFrame, "ElementsContainer", UDim2.new(1, 0, 1, -22), UDim2.new(0, 0, 0, 22), nil, 0)
 
+local cursor = Instance.new("Frame", APP_GUI)
+cursor.BorderSizePixel = 0
+cursor.Size = UDim2.new(0, 2, 0, 2)
+cursor.AnchorPoint = Vector2.new(0.5, 0.5)
+cursor.BackgroundColor3 = Color3.new(1, 1, 1)
+
+
 -- ESP
 AddPadding(elements_Container, 17, "ESP")
 local switch_ESP_Enabled = CreateSwitch(elements_Container, "Switch_ESP_Enabled", "ESP Enabled", false)
@@ -914,6 +921,19 @@ local function AddESPToPlayer(plr)
 					tag.AnchorPoint = Vector2.new(0.5, 1)
 					tag.TextStrokeTransparency = 0.9
 					tag.BackgroundTransparency = 1
+					
+					if LOCAL_PLAYER:IsFriendsWith(plr.UserId) then -- Label as friend
+						local friend = Instance.new("TextLabel", tag)
+						friend.Name = "Friend"
+						friend.Text = "FRIEND"
+						friend.TextSize = 8
+						friend.TextColor3 = Color3.new(0.4, 1, 0.4)
+						friend.Position = UDim2.new(0.5, 0, 0, -10)
+						friend.Font = Enum.Font.GothamSemibold
+						friend.AnchorPoint = Vector2.new(0.5, 0)
+						friend.TextStrokeTransparency = 0.9
+						friend.BackgroundTransparency = 1
+					end
 					
 					game:GetService("RunService").RenderStepped:Connect(function()
 						if SCRIPT_ENABLED and tag.Parent ~= nil and stop == false then
@@ -1012,8 +1032,15 @@ local aimbotTarget = nil
 
 while SCRIPT_ENABLED do
 	local dt = tick() - lastTick
-	
 	local cam = workspace.CurrentCamera
+	
+	cursor.Position = UDim2.new(0, MOUSE.X, 0, MOUSE.Y)
+	
+	if MOUSE.X > mainFrame.AbsolutePosition.X and MOUSE.X < mainFrame.AbsolutePosition.X + mainFrame.AbsoluteSize.X and MOUSE.Y > mainFrame.AbsolutePosition.Y and MOUSE.Y < mainFrame.AbsolutePosition.Y + mainFrame.AbsoluteSize.Y then
+		cursor.Visible = true
+	else
+		cursor.Visible = false
+	end
 	
 	-- Noclip
 	if switch_Noclip.GetValue() == true then
