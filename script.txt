@@ -1110,7 +1110,7 @@ while SCRIPT_ENABLED do
 			local root = LOCAL_PLAYER.Character:FindFirstChild("HumanoidRootPart")
 			
 			if root then
-				LOCAL_PLAYER.Character:SetPrimaryPartCFrame(LOCAL_PLAYER.Character:GetPrimaryPartCFrame() * CFrame.new(0, 0, -input_FreecamSpeed.GetNumber()))
+				LOCAL_PLAYER.Character:SetPrimaryPartCFrame(LOCAL_PLAYER.Character:GetPrimaryPartCFrame() * CFrame.new(0, 0, -input_TeleportThroughLength.GetNumber()))
 			end
 		end
 	end
