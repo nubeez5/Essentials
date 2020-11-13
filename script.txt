@@ -665,6 +665,10 @@ local function CreateInput(parent, name, titleText, default) -- Allows the user 
 		return inputBox.Text
 	end
 	
+	function t.GetNumber()
+		return typeof(tonumber(inputBox.Text)) == "number" and tonumber(inputBox.Text) or 0
+	end
+	
 	function t.SetText(t)
 		inputBox.Text = t
 	end
@@ -870,9 +874,12 @@ local switch_ShowDistance = CreateSwitch(elements_Container, "Switch_ShowDistanc
 
 -- Settings
 AddPadding(elements_Container, 17, "Settings")
-local slider_FreecamSpeed = CreateSlider(elements_Container, "Slider_FreecamSpeed", "Freecam Speed", 0, 1000, 100, " sps")
-local slider_FreecamSensitivity = CreateSlider(elements_Container, "Slider_FreecamSensitivity", "Freecam Sensitivity", 0, 5, 0.5)
-local slider_TeleportThroughLength = CreateSlider(elements_Container, "Slider_TeleportThroughLength", "Teleport Through Length", 0, 50, 5, " studs")
+local input_FreecamSpeed = CreateInput(elements_Container, "Input_FreecamSpeed", "Freecam Speed", 100)
+local input_FreecamSensitivity = CreateInput(elements_Container, "Input_FreecamSensitivity", "Freecam Sensitivity", 0.5)
+local input_TeleportThroughLength = CreateInput(elements_Container, "Input_TeleportThroughLength", "Teleport Through Length", 5)
+
+--AddPadding(elements_Container, 4, "")
+--local input_GuiTransparency = CreateInput(elements_Container, "Input_GuiTransparency", "GUI Transparency", 0)
 
 -- Fix
 AddPadding(elements_Container, 17, "Fix")
@@ -1034,8 +1041,9 @@ while SCRIPT_ENABLED do
 	local dt = tick() - lastTick
 	local cam = workspace.CurrentCamera
 	
-	cursor.Position = UDim2.new(0, MOUSE.X, 0, MOUSE.Y)
+	--mainFrame.BackgroundTransparency = input_GuiTransparency.GetNumber()
 	
+	cursor.Position = UDim2.new(0, MOUSE.X, 0, MOUSE.Y)
 	if MOUSE.X > mainFrame.AbsolutePosition.X and MOUSE.X < mainFrame.AbsolutePosition.X + mainFrame.AbsoluteSize.X and MOUSE.Y > mainFrame.AbsolutePosition.Y and MOUSE.Y < mainFrame.AbsolutePosition.Y + mainFrame.AbsoluteSize.Y then
 		cursor.Visible = true
 	else
@@ -1102,7 +1110,7 @@ while SCRIPT_ENABLED do
 			local root = LOCAL_PLAYER.Character:FindFirstChild("HumanoidRootPart")
 			
 			if root then
-				LOCAL_PLAYER.Character:SetPrimaryPartCFrame(LOCAL_PLAYER.Character:GetPrimaryPartCFrame() * CFrame.new(0, 0, -slider_TeleportThroughLength.GetValue()))
+				LOCAL_PLAYER.Character:SetPrimaryPartCFrame(LOCAL_PLAYER.Character:GetPrimaryPartCFrame() * CFrame.new(0, 0, -input_FreecamSpeed.GetNumber()))
 			end
 		end
 	end
@@ -1146,7 +1154,7 @@ while SCRIPT_ENABLED do
 						INPUT_SERVICE.MouseBehavior = Enum.MouseBehavior.LockCurrentPosition
 						
 						local delta = INPUT_SERVICE:GetMouseDelta()
-						local sens = INPUT_SERVICE.MouseDeltaSensitivity * slider_FreecamSensitivity.GetValue()
+						local sens = INPUT_SERVICE.MouseDeltaSensitivity * input_FreecamSensitivity.GetNumber()
 						
 						local x = delta.X * (sens * sens)
 						local y = delta.Y * (sens * sens)
@@ -1169,7 +1177,7 @@ while SCRIPT_ENABLED do
 				speedMultiplier = speedMultiplier * 0.3
 			end
 			
-			local move = freecamVelocity.Unit * slider_FreecamSpeed.GetValue() * dt * speedMultiplier
+			local move = freecamVelocity.Unit * input_FreecamSpeed.GetNumber() * dt * speedMultiplier
 			if tostring(move.X) == "-nan(ind)" then move = Vector3.new(0, 0, 0) end
 			
 			cam.CameraType = Enum.CameraType.Scriptable
