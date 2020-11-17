@@ -811,6 +811,11 @@ local function MatchPlayerWithString(str)
 	end
 end
 
+local function StringToNumber(str, returnValueIfNotValid)
+	local ret = returnValueIfNotValid ~= nil and returnValueIfNotValid or 0
+	return typeof(tonumber(str)) == "number" and tonumber(str) or ret
+end
+
 -- Math Functions
 local function RoundNumber(number, decimals)
 	local multiplier = 10 ^ decimals
@@ -846,6 +851,10 @@ AddPadding(elements_Container, 17, "ESP")
 local switch_ESP_Enabled = CreateSwitch(elements_Container, "Switch_ESP_Enabled", "ESP Enabled", false)
 local switch_Freecam_Enabled = CreateSwitch(elements_Container, "Switch_Freecam_Enabled", "Freecam Enabled", false)
 
+AddPadding(elements_Container, 4)
+local switch_LabelItemInHand = CreateSwitch(elements_Container, "Switch_LabelItemInHand", "Label Item In Hand", false)
+local switch_ShowDistance = CreateSwitch(elements_Container, "Switch_ShowDistance_Enabled", "Show Distance", false)
+
 -- Aimbot
 AddPadding(elements_Container, 17, "Aimbot")
 local switch_Aimbot_Enabled = CreateSwitch(elements_Container, "Switch_Aimbot_Enabled", "Aimbot Enabled", false)
@@ -870,7 +879,6 @@ local button_TeleportToPlayer = CreateButton(elements_Container, "Button_Telepor
 AddPadding(elements_Container, 17, "Misc")
 
 local switch_Noclip = CreateSwitch(elements_Container, "Switch_Noclip", "Noclip Enabled", false)
-local switch_ShowDistance = CreateSwitch(elements_Container, "Switch_ShowDistance_Enabled", "Show Distance", true)
 
 -- Settings
 AddPadding(elements_Container, 17, "Settings")
@@ -887,7 +895,7 @@ local button_FixCamera = CreateButton(elements_Container, "Button_FixCamera", "F
 
 -- Status
 AddPadding(elements_Container, 17, "Stats")
-local status_Statuses = CreateOutput(elements_Container, "Status_StatusBox", 3)
+local output = CreateOutput(elements_Container, "Output", 5)
 
 local uniqueId = tostring(game:GetService("HttpService"):GenerateGUID(false))
 
@@ -929,6 +937,17 @@ local function AddESPToPlayer(plr)
 					tag.TextStrokeTransparency = 0.9
 					tag.BackgroundTransparency = 1
 					
+					local item = Instance.new("TextLabel", tag)
+					item.Name = "Item"
+					item.Text = ""
+					item.TextSize = 10
+					item.TextColor3 = Color3.new(0.4, 1, 0.4)
+					item.Position = UDim2.new(0.5, 0, 0, -10)
+					item.Font = Enum.Font.GothamSemibold
+					item.AnchorPoint = Vector2.new(0.5, 0)
+					item.TextStrokeTransparency = 0.9
+					item.BackgroundTransparency = 1
+					
 					if LOCAL_PLAYER:IsFriendsWith(plr.UserId) then -- Label as friend
 						local friend = Instance.new("TextLabel", tag)
 						friend.Name = "Friend"
@@ -940,7 +959,39 @@ local function AddESPToPlayer(plr)
 						friend.AnchorPoint = Vector2.new(0.5, 0)
 						friend.TextStrokeTransparency = 0.9
 						friend.BackgroundTransparency = 1
+						
+						item.Position = UDim2.new(0.5, 0, 0, -18)
 					end
+					
+					plr.Character.ChildAdded:Connect(function(c)
+						if c:IsA("Tool") then
+							item.Text = "Holding: " .. c.Name
+						end
+					end)
+					
+					plr.Character.ChildRemoved:Connect(function(c)
+						if c:IsA("Tool") then
+							if "Holding: " .. c.Name == item.Text then
+								item.Text = ""
+							end
+						end
+					end)
+					
+					for _, c in pairs(plr.Character:GetChildren()) do
+						if c:IsA("BasePart") and c.Name ~= "HumanoidRootPart" then
+							AddBox(c)
+						end
+
+						if c:IsA("Tool") then
+							item.Text = "Holding: " .. c.Name
+						end
+					end
+
+					plr.Character.ChildAdded:Connect(function(c)
+						if c:IsA("BasePart") and c.Name ~= "HumanoidRootPart" and SCRIPT_ENABLED then
+							AddBox(c)
+						end
+					end)
 					
 					game:GetService("RunService").RenderStepped:Connect(function()
 						if SCRIPT_ENABLED and tag.Parent ~= nil and stop == false then
@@ -961,6 +1012,8 @@ local function AddESPToPlayer(plr)
 								tag.Text = "[" .. plr.Name .. "]"
 								tag.TextColor3 = Color3.new(plr.TeamColor.r, plr.TeamColor.g, plr.TeamColor.b)
 								
+								item.Visible = switch_LabelItemInHand.GetValue()
+								
 								if plr.Character:FindFirstChild("Humanoid") then
 									tag.Text = tag.Text .. "[" .. math.floor(plr.Character.Humanoid.Health + 0.5) .. "/" .. math.floor(plr.Character.Humanoid.MaxHealth + 0.5) .. "]"
 									
@@ -972,18 +1025,6 @@ local function AddESPToPlayer(plr)
 								tag:Destroy()
 								stop = true
 							end
-						end
-					end)
-					
-					for _, c in pairs(plr.Character:GetChildren()) do
-						if c:IsA("BasePart") and c.Name ~= "HumanoidRootPart" then
-							AddBox(c)
-						end
-					end
-					
-					plr.Character.ChildAdded:Connect(function(c)
-						if c:IsA("BasePart") and c.Name ~= "HumanoidRootPart" and SCRIPT_ENABLED then
-							AddBox(c)
 						end
 					end)
 					
@@ -1253,11 +1294,14 @@ while SCRIPT_ENABLED do
 	-- Update Statuses
 	local camPosString = RoundNumber(cam.CFrame.Position.X, 2) .. ", " .. RoundNumber(cam.CFrame.Position.Y, 2) .. ", " .. RoundNumber(cam.CFrame.Position.Z, 2)
 	
-	status_Statuses.EditStatus(1, "Camera Position: " .. camPosString)
-	status_Statuses.EditStatus(2, "Health: N/A")
+	output.EditStatus(1, "Camera Position: " .. camPosString)
+	output.EditStatus(2, "Health: N/A")
+	output.EditStatus(3, "Player Count: " .. #game.Players:GetPlayers() .. "/" .. game.Players.MaxPlayers)
+	
+	output.EditStatus(4, "Job ID: " .. game.JobId)
 	
 	pcall(function()
-		status_Statuses.EditStatus(2, "Health: " .. math.floor(LOCAL_PLAYER.Character.Humanoid.Health + 0.5) .. "/" .. math.floor(LOCAL_PLAYER.Character.Humanoid.MaxHealth + 0.5))
+		output.EditStatus(2, "Health: " .. math.floor(LOCAL_PLAYER.Character.Humanoid.Health + 0.5) .. "/" .. math.floor(LOCAL_PLAYER.Character.Humanoid.MaxHealth + 0.5))
 	end)
 	
 	
