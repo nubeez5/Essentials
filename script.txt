@@ -942,7 +942,7 @@ local function AddESPToPlayer(plr)
 					item.Text = ""
 					item.TextSize = 10
 					item.TextColor3 = Color3.new(0.4, 1, 0.4)
-					item.Position = UDim2.new(0.5, 0, 0, -10)
+					item.Position = UDim2.new(0.5, 0, 0, -11)
 					item.Font = Enum.Font.GothamSemibold
 					item.AnchorPoint = Vector2.new(0.5, 0)
 					item.TextStrokeTransparency = 0.9
