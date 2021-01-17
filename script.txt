@@ -157,24 +157,22 @@ local function CreateDragHandle(parent, attachedGui, name, size, position, ancho
 	miniButton.Position = UDim2.new(1, -37, 0.5, 0)
 	
 	-- Enable Disable
-	--[[
 	miniButton.MouseButton1Click:Connect(function()
 		if APPLICATION_MINIMIZED then
-			windowMinimized = false
+			APPLICATION_MINIMIZED = false
 			
-			parent.Options_Container.Visible = true
-			parent.Size = UDim2.new(0, windowSize.X, 0, windowSize.Y)
+			--parent.Visible = true
+			--parent.Size = UDim2.new(0, APPLICATION_SIZE.X, 0, APPLICATION_SIZE.Y)
 		else
-			windowMinimized = true
+			APPLICATION_MINIMIZED = true
 			
-			parent.Options_Container.Visible = false
-			parent.Size = UDim2.new(0, windowSize.X, 0, 18)
+			--parent.Visible = false
+			--parent.Size = UDim2.new(0, APPLICATION_SIZE.X, 0, ELEMENT_CONTAINER_HEIGHT)
 			
-			localPlayer.CameraMinZoomDistance = before_CameraMinZoom
-			localPlayer.CameraMaxZoomDistance = before_CameraMaxZoom
+			-- localPlayer.CameraMinZoomDistance = before_CameraMinZoom
+			-- localPlayer.CameraMaxZoomDistance = before_CameraMaxZoom
 		end
 	end)
-	]]
 	
 	closeButton.MouseButton1Click:Connect(function()
 		SCRIPT_ENABLED = false
@@ -799,6 +797,8 @@ local function CreateOutput(parent, name, elementCount) -- Allows the script to 
 		elements[id].Text = text
 	end
 	
+	
+	
 	return t
 end
 
@@ -895,7 +895,7 @@ local button_FixCamera = CreateButton(elements_Container, "Button_FixCamera", "F
 
 -- Status
 AddPadding(elements_Container, 17, "Stats")
-local output = CreateOutput(elements_Container, "Output", 5)
+local output = CreateOutput(elements_Container, "Output", 6)
 
 local uniqueId = tostring(game:GetService("HttpService"):GenerateGUID(false))
 
@@ -1293,15 +1293,25 @@ while SCRIPT_ENABLED do
 	
 	-- Update Statuses
 	local camPosString = RoundNumber(cam.CFrame.Position.X, 2) .. ", " .. RoundNumber(cam.CFrame.Position.Y, 2) .. ", " .. RoundNumber(cam.CFrame.Position.Z, 2)
+	local charVelocityString = ""
+	
+	if LOCAL_PLAYER.Character then
+		if LOCAL_PLAYER.Character:FindFirstChild("HumanoidRootPart") then
+			local root = LOCAL_PLAYER.Character.HumanoidRootPart
+			
+			charVelocityString = RoundNumber(root.Velocity.Magnitude, 2) .. " sps"
+		end
+	end
 	
 	output.EditStatus(1, "Camera Position: " .. camPosString)
-	output.EditStatus(2, "Health: N/A")
-	output.EditStatus(3, "Player Count: " .. #game.Players:GetPlayers() .. "/" .. game.Players.MaxPlayers)
+	output.EditStatus(2, "Character Velocity: " .. charVelocityString)
+	output.EditStatus(3, "Health: N/A")
+	output.EditStatus(4, "Player Count: " .. #game.Players:GetPlayers() .. "/" .. game.Players.MaxPlayers)
 	
-	output.EditStatus(4, "Job ID: " .. game.JobId)
+	output.EditStatus(5, "Job ID: " .. game.JobId)
 	
 	pcall(function()
-		output.EditStatus(2, "Health: " .. math.floor(LOCAL_PLAYER.Character.Humanoid.Health + 0.5) .. "/" .. math.floor(LOCAL_PLAYER.Character.Humanoid.MaxHealth + 0.5))
+		output.EditStatus(3, "Health: " .. math.floor(LOCAL_PLAYER.Character.Humanoid.Health + 0.5) .. "/" .. math.floor(LOCAL_PLAYER.Character.Humanoid.MaxHealth + 0.5))
 	end)
 	
 	
