@@ -860,6 +860,10 @@ AddPadding(elements_Container, 17, "Teleport")
 local button_TeleportToCamera = CreateButton(elements_Container, "Button_TeleportToCamera", "Teleport To Camera", "Teleport")
 local button_TeleportThrough = CreateButton(elements_Container, "Button_TeleportThrough", "Teleport Through", "Teleport")
 
+AddPadding(elements_Container, 4)
+local button_TeleportToPlayer = CreateButton(elements_Container, "Button_TeleportToPlayer", "Teleport To", "Teleport")
+local input_TeleportToPlayer = CreateInput(elements_Container, "Input_TeleportToPlayer", "Player Name")
+
 -- Aimbot
 AddPadding(elements_Container, 17, "Aimbot")
 local switch_Aimbot_Enabled = CreateSwitch(elements_Container, "Switch_Aimbot_Enabled", "Aimbot Enabled", false)
@@ -870,10 +874,6 @@ AddPadding(elements_Container, 17, "Keybinds")
 local keybind_Aimbot = CreateKeybind(elements_Container, "Keybind_Aimbot", "Engage Aimbot", DEFAULT_AIMBOT_KEY)
 local keybind_FreecamUp = CreateKeybind(elements_Container, "Keybind_FreecamUp", "Freecam Up", Enum.KeyCode.E)
 local keybind_FreecamDown = CreateKeybind(elements_Container, "Keybind_FreecamDown", "Freecam Down", Enum.KeyCode.Q)
-
-AddPadding(elements_Container, 4)
-local input_TeleportToPlayer = CreateInput(elements_Container, "Input_TeleportToPlayer", "Player Name")
-local button_TeleportToPlayer = CreateButton(elements_Container, "Button_TeleportToPlayer", "Teleport To", "Teleport")
 
 -- Misc
 AddPadding(elements_Container, 17, "Misc")
