@@ -6,7 +6,7 @@ local INPUT_SERVICE = game:GetService("UserInputService")
 local SCRIPT_ENABLED = true
 
 local APPLICATION_GUI_PARENT = game:GetService("RunService"):IsStudio() and game.Players.LocalPlayer.PlayerGui or game.CoreGui
-local APPLICATION_SIZE = UDim2.new(0, 380, 0, 260)
+local APPLICATION_SIZE = UDim2.new(0, 380, 0, 274)
 local APPLICATION_MINIMIZED = false
 
 local ELEMENT_CONTAINER_EXTRA_PADDING = 0
@@ -869,35 +869,35 @@ AddPadding(elements_Container, 17, "Aimbot")
 local switch_Aimbot_Enabled = CreateSwitch(elements_Container, "Switch_Aimbot_Enabled", "Aimbot Enabled", false)
 local switch_Aimbot_TeamCheck_Enabled = CreateSwitch(elements_Container, "Switch_AimbotTeamCheck_Enabled", "Team Check Enabled", false)
 
+-- Misc
+AddPadding(elements_Container, 17, "Misc")
+
+local switch_Noclip = CreateSwitch(elements_Container, "Switch_Noclip", "Noclip Enabled", false)
+local button_FixCamera = CreateButton(elements_Container, "Button_FixCamera", "Fix Camera", "Fix")
+
 -- Keybinds
 AddPadding(elements_Container, 17, "Keybinds")
 local keybind_Aimbot = CreateKeybind(elements_Container, "Keybind_Aimbot", "Engage Aimbot", DEFAULT_AIMBOT_KEY)
 local keybind_FreecamUp = CreateKeybind(elements_Container, "Keybind_FreecamUp", "Freecam Up", Enum.KeyCode.E)
 local keybind_FreecamDown = CreateKeybind(elements_Container, "Keybind_FreecamDown", "Freecam Down", Enum.KeyCode.Q)
 
--- Misc
-AddPadding(elements_Container, 17, "Misc")
-
-local switch_Noclip = CreateSwitch(elements_Container, "Switch_Noclip", "Noclip Enabled", false)
-
 -- Settings
 AddPadding(elements_Container, 17, "Settings")
 local input_FreecamSpeed = CreateInput(elements_Container, "Input_FreecamSpeed", "Freecam Speed", 100)
 local input_FreecamSensitivity = CreateInput(elements_Container, "Input_FreecamSensitivity", "Freecam Sensitivity", 0.5)
 local input_TeleportThroughLength = CreateInput(elements_Container, "Input_TeleportThroughLength", "Teleport Through Length", 5)
+local input_ESP_Transparency = CreateInput(elements_Container, "Input_ESP_Transparency", "ESP Transparency", 0.6)
 
 --AddPadding(elements_Container, 4, "")
 --local input_GuiTransparency = CreateInput(elements_Container, "Input_GuiTransparency", "GUI Transparency", 0)
-
--- Fix
-AddPadding(elements_Container, 17, "Fix")
-local button_FixCamera = CreateButton(elements_Container, "Button_FixCamera", "Fix Camera", "Fix")
 
 -- Status
 AddPadding(elements_Container, 17, "Stats")
 local output = CreateOutput(elements_Container, "Output", 6)
 
 local uniqueId = tostring(game:GetService("HttpService"):GenerateGUID(false))
+
+local espBoxes = {}
 
 local function AddESPToPlayer(plr)
 	local function AddBox(c)
@@ -906,10 +906,12 @@ local function AddESPToPlayer(plr)
 		box.Adornee = c
 		box.Size = c.Size
 		box.Color = BrickColor.new(1, 1, 1)
-		box.Transparency = 0.5
+		box.Transparency = input_ESP_Transparency.GetNumber()
 		box.ZIndex = 10
 		box.AlwaysOnTop = true
-
+		
+		table.insert(espBoxes, box)
+		
 		c.AncestryChanged:Connect(function()
 			if not box:IsAncestorOf(workspace) then
 				box:Destroy()
@@ -1050,6 +1052,8 @@ game.Players.PlayerAdded:Connect(function(plr)
 end)
 
 local function RemoveESPs()
+	espBoxes = {}
+	
 	for _, plr in pairs(game.Players:GetPlayers()) do
 		if plr.Character then
 			for _, c in pairs(plr.Character:GetDescendants()) do
@@ -1295,6 +1299,13 @@ while SCRIPT_ENABLED do
 			aimbotTarget = nil
 		end
 	end)
+	
+	-- Update ESP transparency
+	if input_ESP_Transparency.InputChanged() then
+		for _, v in pairs(espBoxes) do
+			v.Transparency = input_ESP_Transparency.GetNumber()
+		end
+	end
 
 	-- Update Statuses
 	local camPosString = RoundNumber(cam.CFrame.Position.X, 2) .. ", " .. RoundNumber(cam.CFrame.Position.Y, 2) .. ", " .. RoundNumber(cam.CFrame.Position.Z, 2)
