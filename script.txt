@@ -1313,7 +1313,7 @@ while SCRIPT_ENABLED do
 
 	if LOCAL_PLAYER.Character then
 		if LOCAL_PLAYER.Character:FindFirstChild("HumanoidRootPart") then
-			local root = LOCAL_PLAYER.Character.Head
+			local root = LOCAL_PLAYER.Character.HumanoidRootPart
 
 			charVelocityString = RoundNumber(root.Velocity.Magnitude, 2) .. " sps"
 		end
