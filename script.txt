@@ -1,9 +1,9 @@
+local SCRIPT_ENABLED = true
+
 local LOCAL_PLAYER = game.Players.LocalPlayer
 local MOUSE = LOCAL_PLAYER:GetMouse()
 
 local INPUT_SERVICE = game:GetService("UserInputService")
-
-local SCRIPT_ENABLED = true
 
 local APPLICATION_GUI_PARENT = game:GetService("RunService"):IsStudio() and game.Players.LocalPlayer.PlayerGui or game.CoreGui
 local APPLICATION_SIZE = UDim2.new(0, 380, 0, 274)
@@ -889,12 +889,11 @@ local input_FreecamSensitivity = CreateInput(elements_Container, "Input_FreecamS
 local input_TeleportThroughLength = CreateInput(elements_Container, "Input_TeleportThroughLength", "Teleport Through Length", 5)
 local input_ESP_Transparency = CreateInput(elements_Container, "Input_ESP_Transparency", "ESP Transparency", 0.6)
 
---AddPadding(elements_Container, 4, "")
---local input_GuiTransparency = CreateInput(elements_Container, "Input_GuiTransparency", "GUI Transparency", 0)
-
--- Status
-AddPadding(elements_Container, 17, "Stats")
-local output = CreateOutput(elements_Container, "Output", 6)
+-- Information
+AddPadding(elements_Container, 17, "Information")
+local output_Camera = CreateOutput(elements_Container, "Output", 1)
+local output_Character = CreateOutput(elements_Container, "Output", 3)
+local output_Misc = CreateOutput(elements_Container, "Output", 3)
 
 local uniqueId = tostring(game:GetService("HttpService"):GenerateGUID(false))
 
@@ -1317,27 +1316,37 @@ while SCRIPT_ENABLED do
 		end
 	end
 
-	-- Update Statuses
+	-- Update Outputs
 	local camPosString = RoundNumber(cam.CFrame.Position.X, 2) .. ", " .. RoundNumber(cam.CFrame.Position.Y, 2) .. ", " .. RoundNumber(cam.CFrame.Position.Z, 2)
-	local charVelocityString = ""
+	local charPosString = "N/A"
+	local charRotationString = "N/A"
+	local charVelocityString = "N/A"
 
 	if LOCAL_PLAYER.Character then
 		if LOCAL_PLAYER.Character:FindFirstChild("HumanoidRootPart") then
 			local root = LOCAL_PLAYER.Character.HumanoidRootPart
-
+			local x, y, z = root.Orientation.X, root.Orientation.Y, root.Orientation.Z
+			
+			charPosString = RoundNumber(root.Position.X, 2) .. ", " .. RoundNumber(root.Position.Y, 2) .. ", " .. RoundNumber(root.Position.Z, 2)
+			charRotationString = RoundNumber(x, 2) .. ", " .. RoundNumber(y, 2) .. ", " .. RoundNumber(z, 2)
 			charVelocityString = RoundNumber(root.Velocity.Magnitude, 2) .. " sps"
 		end
 	end
+	
+	
+	output_Camera.EditStatus(1, "Camera Position: " .. camPosString)
+	
+	output_Character.EditStatus(1, "Character Position: " .. charPosString)
+	output_Character.EditStatus(2, "Character Rotation: " .. charRotationString)
+	output_Character.EditStatus(3, "Character Velocity: " .. charVelocityString)
+	
+	output_Misc.EditStatus(1, "Health: N/A")
+	output_Misc.EditStatus(2, "Player Count: " .. #game.Players:GetPlayers() .. "/" .. game.Players.MaxPlayers)
 
-	output.EditStatus(1, "Camera Position: " .. camPosString)
-	output.EditStatus(2, "Character Velocity: " .. charVelocityString)
-	output.EditStatus(3, "Health: N/A")
-	output.EditStatus(4, "Player Count: " .. #game.Players:GetPlayers() .. "/" .. game.Players.MaxPlayers)
-
-	output.EditStatus(5, "Job ID: " .. game.JobId)
+	output_Misc.EditStatus(3, "Job ID: " .. game.JobId)
 
 	pcall(function()
-		output.EditStatus(3, "Health: " .. math.floor(LOCAL_PLAYER.Character.Humanoid.Health + 0.5) .. "/" .. math.floor(LOCAL_PLAYER.Character.Humanoid.MaxHealth + 0.5))
+		output_Misc.EditStatus(1, "Health: " .. math.floor(LOCAL_PLAYER.Character.Humanoid.Health + 0.5) .. "/" .. math.floor(LOCAL_PLAYER.Character.Humanoid.MaxHealth + 0.5))
 	end)
 
 
