@@ -1323,13 +1323,22 @@ while SCRIPT_ENABLED do
 	local charVelocityString = "N/A"
 
 	if LOCAL_PLAYER.Character then
-		if LOCAL_PLAYER.Character:FindFirstChild("HumanoidRootPart") then
-			local root = LOCAL_PLAYER.Character.HumanoidRootPart
-			local x, y, z = root.Orientation.X, root.Orientation.Y, root.Orientation.Z
+		local root = LOCAL_PLAYER.Character.PrimaryPart
+		local humanoidRootPart = LOCAL_PLAYER.Character:FindFirstChild("HumanoidRootPart")
+		
+		if humanoidRootPart then
+			local x, y, z = humanoidRootPart.Orientation.X, humanoidRootPart.Orientation.Y, humanoidRootPart.Orientation.Z
 			
-			charPosString = RoundNumber(root.Position.X, 2) .. ", " .. RoundNumber(root.Position.Y, 2) .. ", " .. RoundNumber(root.Position.Z, 2)
 			charRotationString = RoundNumber(x, 2) .. ", " .. RoundNumber(y, 2) .. ", " .. RoundNumber(z, 2)
-			charVelocityString = RoundNumber(root.Velocity.Magnitude, 2) .. " sps"
+		end
+		
+		if root then
+			if root:IsA("BasePart") then
+				local x, y, z = root.Orientation.X, root.Orientation.Y, root.Orientation.Z
+				
+				charPosString = RoundNumber(root.Position.X, 2) .. ", " .. RoundNumber(root.Position.Y, 2) .. ", " .. RoundNumber(root.Position.Z, 2)
+				charVelocityString = RoundNumber(root.Velocity.Magnitude, 2) .. " sps"
+			end
 		end
 	end
 	
