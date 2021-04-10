@@ -874,6 +874,7 @@ AddPadding(elements_Container, 17, "Misc")
 
 local switch_Noclip = CreateSwitch(elements_Container, "Switch_Noclip", "Noclip Enabled", false)
 local button_FixCamera = CreateButton(elements_Container, "Button_FixCamera", "Fix Camera", "Fix")
+local button_LoadWorldAtCamera = CreateButton(elements_Container, "Button_LoadWorldAtCamera", "Load World At Camera", "Load")
 
 -- Keybinds
 AddPadding(elements_Container, 17, "Keybinds")
@@ -1076,7 +1077,7 @@ local freecamVelocity = Vector3.new(0, 0, 0)
 local freecamRotation = Vector2.new(0, 0)
 local freecamPosition = Vector3.new(0, 0, 0)
 
-local previousCamType = Enum.CameraType.Custom
+local previousCamType = workspace.CurrentCamera.CameraType
 local lastTick = tick()
 
 local aimbotTarget = nil
@@ -1093,6 +1094,15 @@ while SCRIPT_ENABLED do
 		cursor.Visible = true
 	else
 		cursor.Visible = false
+	end
+	
+	-- Load world
+	if button_LoadWorldAtCamera.ButtonPressed() then
+		local thread = coroutine.create(function()
+			LOCAL_PLAYER:RequestStreamAroundAsync(cam.CFrame.Position)
+		end)
+		
+		coroutine.resume(thread)
 	end
 
 	-- Noclip
@@ -1336,3 +1346,7 @@ while SCRIPT_ENABLED do
 end
 
 RemoveESPs()
+
+if switch_Freecam_Enabled.GetValue() == true then
+	workspace.CurrentCamera.CameraType = previousCamType
+end
