@@ -14,8 +14,6 @@ local ELEMENT_CONTAINER_HEIGHT = 19
 local ELEMENT_TITLE_PADDING = 10
 local SLIDER_MAX_DECIMAL_PLACES = 2
 
-local DEFAULT_AIMBOT_KEY = Enum.KeyCode.LeftControl
-
 local APPLICATION_THEME = {}
 do
 	APPLICATION_THEME.TextColor = Color3.fromRGB(255, 255, 255)
@@ -827,7 +825,7 @@ end
 
 
 
-
+local DEFAULT_AIMBOT_KEY = Enum.KeyCode.LeftControl
 
 -- Application Gui
 local APP_GUI = CreateGui(APPLICATION_GUI_PARENT, "APPLICATION", false, false)
@@ -852,6 +850,7 @@ local switch_ESP_Enabled = CreateSwitch(elements_Container, "Switch_ESP_Enabled"
 local switch_Freecam_Enabled = CreateSwitch(elements_Container, "Switch_Freecam_Enabled", "Freecam Enabled", false)
 
 AddPadding(elements_Container, 4)
+local switch_UseDisplayName = CreateSwitch(elements_Container, "Switch_UseDisplayName", "Use Display Name", false)
 local switch_LabelItemInHand = CreateSwitch(elements_Container, "Switch_LabelItemInHand", "Label Item In Hand", false)
 local switch_ShowDistance = CreateSwitch(elements_Container, "Switch_ShowDistance_Enabled", "Show Distance", false)
 
@@ -1011,7 +1010,12 @@ local function AddESPToPlayer(plr)
 								end
 
 								-- Tag
-								tag.Text = "[" .. plr.Name .. "]"
+								if switch_UseDisplayName.GetValue() == true then
+									tag.Text = "[" .. plr.DisplayName .. "]"
+								else
+									tag.Text = "[" .. plr.Name .. "]"
+								end
+									
 								tag.TextColor3 = Color3.new(plr.TeamColor.r, plr.TeamColor.g, plr.TeamColor.b)
 
 								item.Visible = switch_LabelItemInHand.GetValue()
