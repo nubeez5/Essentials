@@ -1021,6 +1021,10 @@ local function AddESPToPlayer(plr)
 								item.Visible = switch_LabelItemInHand.GetValue()
 
 								if plr.Character:FindFirstChild("Humanoid") then
+									if plr.Character.Humanoid.Health == 0 then
+										stop = true
+									end
+									
 									tag.Text = tag.Text .. "[" .. math.floor(plr.Character.Humanoid.Health + 0.5) .. "/" .. math.floor(plr.Character.Humanoid.MaxHealth + 0.5) .. "]"
 
 									if switch_ShowDistance.GetValue() == true then
