@@ -1024,10 +1024,12 @@ local function AddESPToPlayer(plr)
 							local head = plr.Character:FindFirstChild("Head")
 							
 							-- Tag
+							local tagText = ""
+							
 							if switch_UseDisplayName.GetValue() == true then
-								tag.Text = "[" .. plr.DisplayName .. "]"
+								tagText = "[" .. plr.DisplayName .. "]"
 							else
-								tag.Text = "[" .. plr.Name .. "]"
+								tagText = "[" .. plr.Name .. "]"
 							end
 
 							tag.TextColor3 = Color3.new(plr.TeamColor.r, plr.TeamColor.g, plr.TeamColor.b)
@@ -1035,12 +1037,14 @@ local function AddESPToPlayer(plr)
 							item.Visible = switch_LabelItemInHand.GetValue()
 
 							if plr.Character:FindFirstChild("Humanoid") then
-								tag.Text = tag.Text .. "[" .. math.floor(plr.Character.Humanoid.Health + 0.5) .. "/" .. math.floor(plr.Character.Humanoid.MaxHealth + 0.5) .. "]"
+								tagText = tagText .. "[" .. math.floor(plr.Character.Humanoid.Health + 0.5) .. "/" .. math.floor(plr.Character.Humanoid.MaxHealth + 0.5) .. "]"
 
 								if switch_ShowDistance.GetValue() == true then
-									tag.Text = tag.Text .. "[" .. math.floor((workspace.CurrentCamera.CFrame.Position - plr.Character.HumanoidRootPart.Position).Magnitude + 0.5) .. " studs]"
+									tagText = tagText .. "[" .. math.floor((workspace.CurrentCamera.CFrame.Position - plr.Character.HumanoidRootPart.Position).Magnitude + 0.5) .. " studs]"
 								end
 							end
+							
+							tag.Text = tagText
 							
 							-- Position
 							if head ~= nil then
