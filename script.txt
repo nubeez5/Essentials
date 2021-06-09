@@ -925,10 +925,15 @@ local function AddESPToPlayer(plr)
 				repeat step = step + 1 wait() until plr.Character:FindFirstChild("Humanoid") or step > maxChecks or not SCRIPT_ENABLED
 
 				if step <= maxChecks then
-					local scriptConnections = {}
+					-- Remove duplicate tags
+					for _, v in pairs(APP_GUI:GetChildren()) do
+						if v.Name == "Tag_" .. plr.Name then
+							v:Destroy()
+						end
+					end
 					
 					local tag = Instance.new("TextLabel", APP_GUI)
-					tag.Name = "Tag"
+					tag.Name = "Tag_" .. plr.Name
 					tag.TextSize = 11
 					tag.TextColor3 = Color3.new(1, 1, 1)
 					tag.Font = Enum.Font.GothamSemibold
@@ -1086,7 +1091,7 @@ local function RemoveESPs()
 			end
 
 			for _, c in pairs(APP_GUI:GetChildren()) do
-				if c:IsA("BoxHandleAdornment") or c.Name == "Tag" then
+				if c:IsA("BoxHandleAdornment") or string.find(c.Name, "Tag") then
 					c:Destroy()
 				end
 			end
