@@ -1009,26 +1009,14 @@ local function AddESPToPlayer(plr)
 						
 						pcall(function() tag:Destroy() end)
 					end
-		
+					
 					renderSteppedConnection = game:GetService("RunService").RenderStepped:Connect(function()
 						if SCRIPT_ENABLED then
-							if plr.Character == nil or plr == nil or currentCharacter ~= plr.Character or tag.Parent ~= APP_GUI then
+							if plr == nil or currentCharacter ~= plr.Character or tag.Parent ~= APP_GUI then
 								Disconnect()
 							end
 							
 							local head = plr.Character:FindFirstChild("Head")
-							
-							if head then
-								local pos, onScreen = workspace.CurrentCamera:WorldToScreenPoint(head.Position)
-								local offset = 1500 / (head.Position - workspace.CurrentCamera.CFrame.Position).Magnitude
-
-								if onScreen then
-									tag.Visible = true
-									tag.Position = UDim2.new(0, pos.X, 0, pos.Y - offset)
-								else
-									tag.Visible = false
-								end
-							end
 							
 							-- Tag
 							if switch_UseDisplayName.GetValue() == true then
@@ -1047,6 +1035,21 @@ local function AddESPToPlayer(plr)
 								if switch_ShowDistance.GetValue() == true then
 									tag.Text = tag.Text .. "[" .. math.floor((workspace.CurrentCamera.CFrame.Position - plr.Character.HumanoidRootPart.Position).Magnitude + 0.5) .. " studs]"
 								end
+							end
+							
+							-- Position
+							if head ~= nil then
+								local pos, onScreen = workspace.CurrentCamera:WorldToScreenPoint(head.Position)
+								local offset = 1500 / (head.Position - workspace.CurrentCamera.CFrame.Position).Magnitude
+
+								if onScreen then
+									tag.Visible = true
+									tag.Position = UDim2.new(0, pos.X, 0, pos.Y - offset)
+								else
+									tag.Visible = false
+								end
+							else
+								tag.Visible = false
 							end
 						else
 							Disconnect()
